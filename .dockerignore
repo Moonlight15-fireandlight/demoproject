@@ -1,2 +1,4 @@
 venv
-db.sqlite3
+#/demo/__pycache__
+#db.sqlite3 borrar el pycache
+#https://docs.docker.com/build/building/context/
