@@ -1,0 +1,132 @@
+Started by user Paul Pillhuaman Morales
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/demoprojectdevops
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (loggin into AWS ECR)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker login --username AWS --password-stdin public.ecr.aws/g0d0u9h2
++ aws ecr-public get-login-password --region us-east-1
+WARNING! Your password will be stored unencrypted in /var/lib/jenkins/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build code)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/demoprojectdevops/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Moonlight15-fireandlight/demoproject # timeout=10
+Fetching upstream changes from https://github.com/Moonlight15-fireandlight/demoproject
+ > git --version # timeout=10
+ > git --version # 'git version 2.25.1'
+ > git fetch --tags --force --progress -- https://github.com/Moonlight15-fireandlight/demoproject +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision b0c90beb4233400c4d98b28ed71816110cea02f7 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f b0c90beb4233400c4d98b28ed71816110cea02f7 # timeout=10
+Commit message: "image deployed demoapi:1.0"
+ > git rev-list --no-walk b0c90beb4233400c4d98b28ed71816110cea02f7 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Docker build image)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker build -t demodevsuapi .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from dockerfile
+#1 transferring dockerfile: 408B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12.2-slim-bullseye
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 142B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/python:3.12.2-slim-bullseye@sha256:1c0da9b35e7fbba5441c9652e93194450f849ba69599dee38ebf9a04c011dc42
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 13.26kB 0.0s done
+#5 DONE 0.0s
+
+#6 [4/5] RUN pip install --upgrade pip
+#6 CACHED
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] ADD . /app
+#8 CACHED
+
+#9 [5/5] RUN pip --no-cache-dir install -r requirements.txt
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 writing image sha256:13756cbe3093015859bbfc33c408ac182df8f584965c90bda01874d07155e983 done
+#10 naming to docker.io/library/demodevsuapi done
+#10 DONE 0.0s
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Pushing to ECR)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker tag demodevsuapi:latest public.ecr.aws/g0d0u9h2/demodevsuapi:latest
+[Pipeline] sh
++ docker push public.ecr.aws/g0d0u9h2/demodevsuapi:latest
+The push refers to repository [public.ecr.aws/g0d0u9h2/demodevsuapi]
+4eae3da2a0e2: Preparing
+7b405b17a03e: Preparing
+776594de420f: Preparing
+05fcdc2fef8e: Preparing
+c3d2c9a19385: Preparing
+7972bec7d468: Preparing
+6d4e789623ab: Preparing
+e00d2ab597e7: Preparing
+0baf2321956a: Preparing
+7972bec7d468: Waiting
+6d4e789623ab: Waiting
+e00d2ab597e7: Waiting
+0baf2321956a: Waiting
+05fcdc2fef8e: Pushed
+7b405b17a03e: Pushed
+776594de420f: Pushed
+7972bec7d468: Pushed
+c3d2c9a19385: Pushed
+4eae3da2a0e2: Pushed
+e00d2ab597e7: Pushed
+6d4e789623ab: Pushed
+0baf2321956a: Pushed
+latest: digest: sha256:bb175efa077f2675df4b697b13b61224021d20d4afef15d0fa5476a8eb9578ff size: 2205
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

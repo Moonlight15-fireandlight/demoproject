@@ -1,0 +1,41 @@
+pipeline{
+    agent any
+    environment {
+        AWS_ACCOUNT_ID="640109666574"
+        AWS_DEFAULT_REGION="us-east-1"
+        IMAGE_REPO_NAME="demoapi"
+        IMAGE_TAG="latest"
+        REPOSITORY_URI="public.ecr.aws/g0d0u9h2/demoapi"
+    }
+    stages{
+        stage('loggin into AWS ECR'){
+            steps {
+                script{
+                    sh "aws ecr-public get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}"
+                }
+            }
+        }
+        stage('Build code'){
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Moonlight15-fireandlight/demoproject']])
+            }
+        }
+        stage('Docker build image'){
+            steps{
+                script{
+                    //sh 'docker build -t demoapi:latest .'
+                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                }
+            }
+        }
+        stage('Pushing to ECR'){
+            steps{
+                script{
+                    sh "docker tag demoapi:latest public.ecr.aws/g0d0u9h2/demoapi:latest"
+                    sh "docker push public.ecr.aws/g0d0u9h2/demoapi:latest"
+                }
+            }
+
+        }
+    }
+}
